@@ -375,6 +375,3 @@ if __name__ == '__main__':
     get_display_data = GetDisplayData(root, settings_data)
     root.mainloop()
 
-# Czarna obwówkda dla napisów. zamiana na temperatury na inne jendostki, tworzenie wykresu z np temperatur
-# zrob swoj terminal zeby mozna bylo klikac w link
-# rozmiar page file
