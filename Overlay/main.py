@@ -12,7 +12,7 @@ import pythonping
 import termcolor
 import colorama
 import clr
-clr.AddReference(os.path.abspath("data/open_hardware_monitor/OpenHardwareMonitorLib.dll"))
+clr.AddReference(os.path.abspath("data//open_hardware_monitor//OpenHardwareMonitorLib.dll"))
 from OpenHardwareMonitor import Hardware
 
 
@@ -112,7 +112,7 @@ class GetDisplayData:
         self.pinging = True
         ping_test = pythonping.ping(self.ip_server_to_pinging)
         if int(ping_test.rtt_max_ms) == 2000:
-            self.ping = "Internet problem"
+            self.ping = "Internet proble"
         else:
             self.ping = int(ping_test.rtt_avg_ms)
         self.pinging = False
@@ -368,7 +368,7 @@ if __name__ == '__main__':
     print(termcolor.colored("Loading program...\nYou can minimize this window. Close this window if you want close program\nIf this program don't work in game, change game settings to display game in window\n", "blue", attrs=["bold"]))
     print(termcolor.colored("Ping is pinging only EU west CS-GO server, soo in other games ping can be different\nIn addition this option can slow down your Internet a bit. Write ping to disable this option\n", "yellow"))
 
-    with open("data/settings.json", "r") as file:
+    with open("data//settings.json", "r") as file:
         settings_data = json.load(file)
 
     root = tk.Tk()
