@@ -17,9 +17,8 @@ from OpenHardwareMonitor import Hardware
 
 
 class DisplayOverlay:
-    def __init__(self, root, settings_data):
-        self.settings_data = settings_data
-        self.overlay = root
+    def __init__(self):
+
         self.overlay = tk.Canvas(width=910, height=310, highlightthickness=0)
         self.overlay.master.overrideredirect(True)
         self.overlay.master.lift()
@@ -29,20 +28,22 @@ class DisplayOverlay:
         self.overlay.create_rectangle(0, 0, 910, 310, fill="gray30")
         self.overlay.pack()
 
+        GetDisplayData(self.display_label)
+
     def display_label(self, text, row, column, get_data_function):
-        label = tk.Label(self.overlay, text=text, bg="gray30", fg=settings_data["font_color"], font=("Comic Sans MS", self.settings_data["font_size"], "bold"))
+        label = tk.Label(self.overlay, text=text, bg="gray30", fg=SETTINGS_DATA["font_color"],
+                         font=("Comic Sans MS", SETTINGS_DATA["font_size"], "bold"))
         label.grid(row=row, column=column)
-        label.after(settings_data["refresh"], get_data_function)
-        label.after(settings_data["refresh"], label.destroy)
+        label.after(SETTINGS_DATA["refresh"], get_data_function)
+        label.after(SETTINGS_DATA["refresh"], label.destroy)
 
 
 class GetDisplayData:
-    def __init__(self, root, settings_data):
+    def __init__(self, display_function):
         self.loading = True
         threading._start_new_thread(self.loading_animation, ())
 
-        self.settings_data = settings_data
-        self.display = DisplayOverlay(root, self.settings_data)
+        self.display = display_function
 
         self.ip_server_to_pinging = "146.66.153.12"  # EU west CS-GO server
         self.ping = int(pythonping.ping(self.ip_server_to_pinging).rtt_max_ms)
@@ -73,10 +74,11 @@ class GetDisplayData:
 
         self.loading = False
         time.sleep(0.2)
-        threading._start_new_thread(GettingAndSavingUserConfig(root, self.settings_data).get_user_input, ())
+        threading._start_new_thread(GettingAndSavingUserConfig().get_user_input, ())
 
     def loading_animation(self):
-        animation_text = [" [=     ]", " [ =    ]", " [  =   ]", " [   =  ]", " [    = ]", " [     =]", " [    = ]", " [   =  ]", " [  =   ]", " [ =    ]"]
+        animation_text = [" [=     ]", " [ =    ]", " [  =   ]", " [   =  ]", " [    = ]",
+                          " [     =]", " [    = ]", " [   =  ]", " [  =   ]", " [ =    ]"]
         i = 0
         while self.loading:
             print(termcolor.colored(animation_text[i % len(animation_text)], "blue"), end="\r")
@@ -88,17 +90,17 @@ class GetDisplayData:
         text = f"FPS: {fps}"
         row = 1
         column = 1
-        self.display.display_label(text, row, column, self.get_current_fps)
+        self.display(text, row, column, self.get_current_fps)
 
     def get_average_fps(self):
         average_fps = "soon"  # todo
         text = f"Average FPS: {average_fps}"
         row = 1
         column = 2
-        self.display.display_label(text, row, column, self.get_average_fps)
+        self.display(text, row, column, self.get_average_fps)
 
     def get_ping(self):
-        if settings_data["ping_function"]:
+        if SETTINGS_DATA["ping_function"]:
             if not self.pinging:
                 threading._start_new_thread(self.pinging_function, ())
             text = f"Ping: {self.ping}ms"
@@ -106,7 +108,7 @@ class GetDisplayData:
             text = "Ping: OFF"
         row = 2
         column = 1
-        self.display.display_label(text, row, column, self.get_ping)
+        self.display(text, row, column, self.get_ping)
 
     def pinging_function(self):
         self.pinging = True
@@ -124,14 +126,14 @@ class GetDisplayData:
         text = f"Internet usage: {'%.2f' % internet_usage}Mb/s"
         row = 2
         column = 2
-        self.display.display_label(text, row, column, self.get_internet_usage)
+        self.display(text, row, column, self.get_internet_usage)
 
     def get_cpu_usage(self):
         cpu_usage = psutil.cpu_percent()
         text = f"Cpu - Using: {'%.1f' % cpu_usage}%"
         row = 3
         column = 1
-        self.display.display_label(text, row, column, self.get_cpu_usage)
+        self.display(text, row, column, self.get_cpu_usage)
 
     def get_cpu_temp(self):
         self.computer.Hardware[0].Update()
@@ -145,12 +147,13 @@ class GetDisplayData:
             text = f"Temp: {'%.1f' % cpu_temp}C"
         except TypeError:
             if self.is_admin:
-                print(termcolor.colored("Can't get access to CPU temperature. To see CPU temperature run program as admin.\nSource: https://www.digitalcitizen.life/run-as-admin/\n", "red"))
+                print(termcolor.colored("""Can't get access to CPU temperature. To see CPU temperature run program as admin
+Source: https://www.digitalcitizen.life/run-as-admin/\n""", "red"))
             text = "Temp: None"
             self.is_admin = False
         row = 3
         column = 2
-        self.display.display_label(text, row, column, self.get_cpu_temp)
+        self.display(text, row, column, self.get_cpu_temp)
 
     def get_gpu_usage(self):
         try:
@@ -163,7 +166,7 @@ class GetDisplayData:
             self.is_gpu = False
         row = 4
         column = 1
-        self.display.display_label(text, row, column, self.get_gpu_usage)
+        self.display(text, row, column, self.get_gpu_usage)
 
     def get_gpu_temp(self):
         try:
@@ -174,7 +177,7 @@ class GetDisplayData:
             text = "Temp: None"
         row = 4
         column = 2
-        self.display.display_label(text, row, column, self.get_gpu_temp)
+        self.display(text, row, column, self.get_gpu_temp)
 
     def get_gpu_memory_max(self):
         try:
@@ -184,7 +187,7 @@ class GetDisplayData:
             text = "GPU memory - Total: None"
         row = 5
         column = 1
-        self.display.display_label(text, row, column, self.get_gpu_memory_max)
+        self.display(text, row, column, self.get_gpu_memory_max)
 
     def get_gpu_memory_usage(self):
         try:
@@ -194,28 +197,24 @@ class GetDisplayData:
             text = "Using: None"
         row = 5
         column = 2
-        self.display.display_label(text, row, column, self.get_gpu_memory_usage)
+        self.display(text, row, column, self.get_gpu_memory_usage)
 
     def get_max_ram(self):
         ram_usage_total = psutil.virtual_memory().total / 2 ** 30  # divide by 2**30 to convert to GB
         text = f"Ram - Total: {'%.1f' % ram_usage_total}GB"
         row = 6
         column = 1
-        self.display.display_label(text, row, column, self.get_max_ram)
+        self.display(text, row, column, self.get_max_ram)
 
     def get_ram_usage(self):
         ram_usage = psutil.virtual_memory()  # divide by 2**30 to convert to GB
         text = f"Using: {'%.1f' % float(ram_usage.used / 2 ** 30)}GB ({ram_usage.percent}%)"
         row = 6
         column = 2
-        self.display.display_label(text, row, column, self.get_ram_usage)
+        self.display(text, row, column, self.get_ram_usage)
 
 
 class GettingAndSavingUserConfig:
-    def __init__(self, root, settings_data):
-        self.overlay = root
-        self.settings_data = settings_data
-
     def get_user_input(self):
         while True:
             commend = input("Write command (help to get commands list, q to quit program) --> ")
@@ -249,13 +248,13 @@ Available commands:
 
     def quit_from_program(self):
         input("\nThanks for using my program. Hope you liked it! Click enter to close program")
-        self.overlay.quit()
+        ROOT.quit()
         sys.exit()
 
     def change_font_size(self):
         while True:
             try:
-                new_font_size = int(input(f"Current font size: {settings_data['font_size']}\nWrite new font_size: "))
+                new_font_size = int(input(f"Current font size: {SETTINGS_DATA['font_size']}\nWrite new font_size: "))
                 break
             except ValueError:
                 print(termcolor.colored("You have to write number like 10", "red"))
@@ -265,7 +264,7 @@ Available commands:
         elif new_font_size < 5:
             new_font_size = 5
             print(termcolor.colored("Minimum font size is 5", "red"))
-        settings_data["font_size"] = new_font_size
+        SETTINGS_DATA["font_size"] = new_font_size
         print(termcolor.colored(f"New font size is {new_font_size}\n", "yellow"))
         self.save()
 
@@ -273,7 +272,7 @@ Available commands:
         while True:
             try:
                 new_color = input(
-                    f"Current color: {settings_data['font_color']}\nWrite new color\nIf you want see all available colors write 1: ")
+                    f"Current color: {SETTINGS_DATA['font_color']}\nWrite new color\nIf you want see all available colors write 1: ")
                 if new_color == "1":
                     webbrowser.open(
                         "http://www.science.smith.edu/dftwiki/images/thumb/3/3d/TkInterColorCharts.png/800px-TkInterColorCharts.png")
@@ -282,7 +281,7 @@ Available commands:
                     break
             except tk.TclError:
                 print(termcolor.colored("Wrong color", "red"))
-        settings_data["font_color"] = new_color
+        SETTINGS_DATA["font_color"] = new_color
         print(termcolor.colored(f"New color is {new_color}\n", "yellow"))
         self.save()
 
@@ -291,7 +290,7 @@ Available commands:
             try:
                 new_refresh_time = float(
                     input(
-                        f"Current refresh time: {settings_data['refresh'] / 1000}\nWrite new refresh time (in sec): "))
+                        f"Current refresh time: {SETTINGS_DATA['refresh'] / 1000}\nWrite new refresh time (in sec): "))
                 break
             except ValueError:
                 print(termcolor.colored("You have to write number like 10", "red"))
@@ -302,23 +301,23 @@ Available commands:
             new_refresh_time = 0.2
             print(termcolor.colored("Minimum refresh time is 0.2", "red"))
         new_refresh_time *= 1000  # because 1sec = 1000 in tkinter
-        settings_data["refresh"] = int(new_refresh_time)
+        SETTINGS_DATA["refresh"] = int(new_refresh_time)
         print(termcolor.colored(f"New refresh time is {new_refresh_time / 1000}sec\n", "yellow"))
         self.save()
 
     def ping_label_switch(self):
-        if settings_data["ping_function"]:
+        if SETTINGS_DATA["ping_function"]:
             print(termcolor.colored("Ping label is now disabled", "yellow"))
-            settings_data["ping_function"] = False
+            SETTINGS_DATA["ping_function"] = False
         else:
             print(termcolor.colored("Ping label is now enabled", "yellow"))
-            settings_data["ping_function"] = True
+            SETTINGS_DATA["ping_function"] = True
         self.save()
 
     @staticmethod
     def save():
         with open("data/settings.json", "w") as file:
-            json.dump(settings_data, file)
+            json.dump(SETTINGS_DATA, file)
 
 
 def recording(checking_input_function):
@@ -365,16 +364,16 @@ if __name__ == '__main__':
 
     print(termcolor.colored(made_by, "green"))
     print(termcolor.colored(made_by2, "green"))
-    print(termcolor.colored("Loading program...\nYou can minimize this window. Close this window if you want close program\nIf this program don't work in game, change game settings to display game in window\n", "blue", attrs=["bold"]))
-    print(termcolor.colored("Ping is pinging only EU west CS-GO server, soo in other games ping can be different\nIn addition this option can slow down your Internet a bit. Write ping to disable this option\n", "yellow"))
+    print(termcolor.colored("""Loading program...
+You can minimize this window. Close this window if you want close program
+If this program don't work in game, change game settings to display game in window\n""", "blue", attrs=["bold"]))
+    print(termcolor.colored("""Ping is pinging only EU west CS-GO server, soo in other games ping can be different
+In addition this option can slow down your Internet a bit. Write ping to disable this option\n""", "yellow"))
 
     with open("data//settings.json", "r") as file:
-        settings_data = json.load(file)
+        SETTINGS_DATA = json.load(file)
+    ROOT = tk.Tk()
 
-    root = tk.Tk()
-    get_display_data = GetDisplayData(root, settings_data)
-    root.mainloop()
+    DisplayOverlay()
+    ROOT.mainloop()
 
-# Czarna obwówkda dla napisów. zamiana na temperatury na inne jendostki, tworzenie wykresu z np temperatur
-# zrob swoj terminal zeby mozna bylo klikac w link
-# rozmiar page file
