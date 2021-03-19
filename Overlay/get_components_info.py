@@ -19,7 +19,7 @@ class GetDisplayData:
 
         self.display = display_function
 
-        self.ip_server_to_pinging = "146.66.153.12"  # EU west CS-GO server
+        self.ip_server_to_pinging = "155.133.250.1"  # EU west CS-GO server
         self.ping = int(pythonping.ping(self.ip_server_to_pinging).rtt_max_ms)
         self.pinging = False
 
@@ -104,7 +104,7 @@ class GetDisplayData:
 
     def get_cpu_usage(self):
         cpu_usage = psutil.cpu_percent()
-        text = f"Cpu - Using: {'%.1f' % cpu_usage}%"
+        text = f"CPU - Using: {'%.1f' % cpu_usage}%"
         row = 3
         column = 1
         self.display(text, row, column, self.get_cpu_usage)
@@ -175,7 +175,7 @@ Source: https://www.digitalcitizen.life/run-as-admin/\n""", "red"))
 
     def get_max_ram(self):
         ram_usage_total = psutil.virtual_memory().total / 2 ** 30  # divide by 2**30 to convert to GB
-        text = f"Ram - Total: {'%.1f' % ram_usage_total}GB"
+        text = f"RAM - Total: {'%.1f' % ram_usage_total}GB"
         row = 6
         column = 1
         self.display(text, row, column, self.get_max_ram)

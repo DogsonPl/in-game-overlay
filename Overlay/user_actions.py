@@ -24,7 +24,7 @@ def get_user_input():
 
 
 def send_help_command():
-    print(f"""\nVersion: 0.7
+    print(f"""\nVersion: 0.8
 Available commands:
 {termcolor.colored('help', 'blue', attrs=['bold'])} - send commands
 {termcolor.colored('q', 'blue', attrs=['bold'])} - quit from program

@@ -83,6 +83,8 @@ class Recorder:
         sound = AudioFileClip(self.sound_filename)
         final_video_with_sound = video.set_audio(sound)
         video_name = input("Write how name this video: ")
+        if video_name == "":
+            video_name = "video"
         final_video_with_sound.write_videofile(f"Videos//{video_name}.mp4", self.fps)
         sound.close()
         video.close()
