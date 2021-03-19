@@ -34,6 +34,7 @@ class Recorder:
             i -= 1
             time.sleep(1)
         self.end_record = False
+        self.done_voice_saving = False
         self.sound_filename = "data//videos_data//sound.wav"
         self.video_filename = "data//videos_data//video.mp4"
         threading._start_new_thread(self.record_sound, ())
@@ -50,17 +51,18 @@ class Recorder:
                 break
             recording = sd.rec(int(duration*freq), samplerate=freq, channels=2)
             sd.wait()
-            wv.write(f"data\\videos_data\\frame_sound{i}.wav", recording, freq, sampwidth=2)
-            w = wave.open(f"data\\videos_data\\frame_sound{i}.wav")
+            wv.write(f"data//videos_data//frame_sound{i}.wav", recording, freq, sampwidth=2)
+            w = wave.open(f"data//videos_data//frame_sound{i}.wav")
             data.append([w.getparams(), w.readframes(w.getnframes())])
             w.close()
-            os.remove(f"data\\videos_data\\frame_sound{i}.wav")
+            os.remove(f"data//videos_data//frame_sound{i}.wav")
             i += 1
         sound_file = wave.open(self.sound_filename, "wb")
         sound_file.setparams(data[0][0])
         for i in range(len(data)):
             sound_file.writeframes(data[i][1])
         sound_file.close()
+        self.done_voice_saving = True
 
     def record_video(self):
         width = win32api.GetSystemMetrics(0)
@@ -90,10 +92,10 @@ class Recorder:
         print(termcolor.colored(termcolor.colored(f"Recording done. Video saved in {abs_video_path}\n", "green")))
 
     def waiting_for_input(self):
-        while not self.end_record:
-            print(termcolor.colored("Recording. Click enter to stop --> ", "yellow"))
-            input()
-            print(termcolor.colored("Saving...", "yellow"))
-            self.end_record = True
-            time.sleep(6)
-            self.add_video_to_sound()
+        print(termcolor.colored("Recording. Click enter to stop --> ", "yellow"))
+        input()
+        print(termcolor.colored("Saving...", "yellow"))
+        self.end_record = True
+        while not self.done_voice_saving:
+            time.sleep(1)
+        self.add_video_to_sound()

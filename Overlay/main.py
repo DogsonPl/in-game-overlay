@@ -7,7 +7,6 @@ import get_components_info
 
 class DisplayOverlay:
     def __init__(self):
-
         self.overlay = tk.Canvas(width=910, height=310, highlightthickness=0)
         self.overlay.master.overrideredirect(True)
         self.overlay.master.lift()

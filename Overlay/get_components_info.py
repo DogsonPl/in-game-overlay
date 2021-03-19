@@ -23,7 +23,7 @@ class GetDisplayData:
         self.ping = int(pythonping.ping(self.ip_server_to_pinging).rtt_max_ms)
         self.pinging = False
 
-        self.old_internet_usage = (psutil.net_io_counters().bytes_sent + psutil.net_io_counters().bytes_recv)
+        self.old_internet_usage = psutil.net_io_counters().bytes_sent + psutil.net_io_counters().bytes_recv
 
         self.is_admin = True
         self.is_gpu = True
