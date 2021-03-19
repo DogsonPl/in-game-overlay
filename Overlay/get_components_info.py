@@ -6,7 +6,7 @@ import os
 import clr
 import termcolor
 import time
-clr.AddReference(os.path.abspath("data//open_hardware_monitor//OpenHardwareMonitorLib.dll"))
+clr.AddReference(os.path.abspath("data//OpenHardwareMonitor//OpenHardwareMonitorLib.dll"))
 from OpenHardwareMonitor import Hardware
 import user_actions
 import config
