@@ -14,15 +14,31 @@ from cv2 import cv2
 
 
 class Recorder:
-    def __init__(self, checking_input_function, fps):
+    def __init__(self):
+        print(termcolor.colored("\nIf you have noises, turn off microphone", "yellow"))
+        while True:
+            try:
+                self.fps = int(input("Write in how many fps record video: "))
+                break
+            except ValueError:
+                print(termcolor.colored("You have to write number", "red"))
+        if self.fps > 75:
+            self.fps = 75
+            print(termcolor.colored("Max fps is 75", "red"))
+        elif self.fps < 5:
+            self.fps = 5
+            print(termcolor.colored("Minimum fps is 5", "red"))
+        i = 5
+        for _ in range(5):
+            print(f"Time to start: {i}")
+            i -= 1
+            time.sleep(1)
         self.end_record = False
-        self.checking_input_function = checking_input_function
-        self.fps = fps
-        self.sound_filename = "data\\videos_data\\sound.wav"
-        self.video_filename = "data\\videos_data\\video.mp4"
+        self.sound_filename = "data//videos_data//sound.wav"
+        self.video_filename = "data//videos_data//video.mp4"
         threading._start_new_thread(self.record_sound, ())
         threading._start_new_thread(self.record_video, ())
-        threading._start_new_thread(self.waiting_for_input, ())
+        self.waiting_for_input()
 
     def record_sound(self):
         freq = 44100
@@ -65,21 +81,19 @@ class Recorder:
         sound = AudioFileClip(self.sound_filename)
         final_video_with_sound = video.set_audio(sound)
         video_name = input("Write how name this video: ")
-        final_video_with_sound.write_videofile(f"videos\\{video_name}.mp4", self.fps)
+        final_video_with_sound.write_videofile(f"Videos//{video_name}.mp4", self.fps)
         sound.close()
         video.close()
         os.remove(self.sound_filename)
         os.remove(self.video_filename)
-        abs_video_path = os.path.abspath(f"videos\\{video_name}.mp4")
+        abs_video_path = os.path.abspath(f"Videos//{video_name}.mp4")
         print(termcolor.colored(termcolor.colored(f"Recording done. Video saved in {abs_video_path}\n", "green")))
-        self.checking_input_function()
 
     def waiting_for_input(self):
         while not self.end_record:
-            print(termcolor.colored("Recording. Write 'q' to stop --> ", "yellow"))
-            q = input()
-            if q == "q":
-                print(termcolor.colored("Saving...", "yellow"))
-                self.end_record = True
-                time.sleep(6)
-                self.add_video_to_sound()
+            print(termcolor.colored("Recording. Click enter to stop --> ", "yellow"))
+            input()
+            print(termcolor.colored("Saving...", "yellow"))
+            self.end_record = True
+            time.sleep(6)
+            self.add_video_to_sound()
