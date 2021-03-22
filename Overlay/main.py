@@ -1,8 +1,9 @@
 import tkinter as tk
+import threading
 import termcolor
-import colorama
 import config
-import get_components_info
+from components_info import COMPONENTS_INFO
+from get_components_info import GetDisplayData
 
 
 class DisplayOverlay:
@@ -16,18 +17,26 @@ class DisplayOverlay:
         self.overlay.create_rectangle(0, 0, 910, 310, fill="gray30")
         self.overlay.pack()
 
-        get_components_info.GetDisplayData(self.display_label)
+        threading._start_new_thread(self.display_label, ())
 
-    def display_label(self, text, row, column, get_data_function):
-        label = tk.Label(self.overlay, text=text, bg="gray30", fg=config.SETTINGS_DATA["font_color"],
-                         font=("Comic Sans MS", config.SETTINGS_DATA["font_size"], "bold"))
-        label.grid(row=row, column=column)
-        label.after(config.SETTINGS_DATA["refresh"], get_data_function)
-        label.after(config.SETTINGS_DATA["refresh"], label.destroy)
+    def display_label(self):
+        while True:
+            labels = []
+            for key, value in COMPONENTS_INFO.items():
+                label = tk.Label(self.overlay, text=value["message"], bg="gray30", fg=config.SETTINGS_DATA["font_color"],
+                                 font=("Comic Sans MS", config.SETTINGS_DATA["font_size"], "bold"))
+                label.grid(row=value["row"], column=value["column"])
+                labels.append(label)
+            self.overlay.after(config.SETTINGS_DATA["refresh"])
+            self.overlay.after(config.SETTINGS_DATA["refresh"], self.destroy_labels, labels)
+
+    @staticmethod
+    def destroy_labels(labels):
+        for label in labels:
+            label.destroy()
 
 
 if __name__ == '__main__':
-    colorama.init()
 
     made_by = """
 .___  ___.      ___       _______   _______        .______   ____    ____       
@@ -36,8 +45,7 @@ if __name__ == '__main__':
 |  |\/|  |   /  /_\  \   |  |  |  ||   __|         |   _  <    \_    _/         
 |  |  |  |  /  _____  \  |  '--'  ||  |____        |  |_)  |     |  |           
 |__|  |__| /__/     \__\ |_______/ |_______|       |______/      |__|           
-"""
-    made_by2 = """
+
  _______    ______     _______      _______.  ______   .__   __.    
 |       \  /  __  \   /  _____|    /       | /  __  \  |  \ |  |
 |  .--.  ||  |  |  | |  |  __     |   (----`|  |  |  | |   \|  |
@@ -47,12 +55,12 @@ if __name__ == '__main__':
 """
 
     print(termcolor.colored(made_by, "green"))
-    print(termcolor.colored(made_by2, "green"))
     print(termcolor.colored("""Loading program...
 You can minimize this window. Close this window if you want close program
 If this program don't work in game, change game settings to display game in window\n""", "blue", attrs=["bold"]))
     print(termcolor.colored("""Ping is pinging only EU west CS-GO server, soo in other games ping can be different
 In addition this option can slow down your Internet a bit. Write ping to disable this option\n""", "yellow"))
 
+    threading._start_new_thread(GetDisplayData, ())
     DisplayOverlay()
     config.ROOT.mainloop()
