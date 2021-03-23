@@ -17,7 +17,7 @@ class DisplayOverlay:
         self.overlay.create_rectangle(0, 0, 910, 310, fill="gray30")
         self.overlay.pack()
 
-        threading._start_new_thread(self.display_label, ())
+        threading.Thread(target=self.display_label).start()
 
     def display_label(self):
         while True:
@@ -61,6 +61,6 @@ If this program don't work in game, change game settings to display game in wind
     print(termcolor.colored("""Ping is pinging only EU west CS-GO server, soo in other games ping can be different
 In addition this option can slow down your Internet a bit. Write ping to disable this option\n""", "yellow"))
 
-    threading._start_new_thread(GetDisplayData, ())
+    threading.Thread(target=GetDisplayData, daemon=True).start()
     DisplayOverlay()
     config.ROOT.mainloop()

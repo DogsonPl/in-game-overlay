@@ -37,8 +37,8 @@ class Recorder:
         self.done_voice_saving = False
         self.sound_filename = "data//videos_data//sound.wav"
         self.video_filename = "data//videos_data//video.mp4"
-        threading._start_new_thread(self.record_sound, ())
-        threading._start_new_thread(self.record_video, ())
+        threading.Thread(target=self.record_sound, daemon=True).start()
+        threading.Thread(target=self.record_video, daemon=True).start()
         self.waiting_for_input()
 
     def record_sound(self):
@@ -46,9 +46,7 @@ class Recorder:
         duration = 3
         i = 0
         data = []
-        while True:
-            if self.end_record:
-                break
+        while not self.end_record:
             recording = sd.rec(int(duration*freq), samplerate=freq, channels=2)
             sd.wait()
             wv.write(f"data//videos_data//frame_sound{i}.wav", recording, freq, sampwidth=2)
@@ -69,9 +67,7 @@ class Recorder:
         height = win32api.GetSystemMetrics(1)
         codec = cv2.VideoWriter_fourcc(*"mp4v")
         video = cv2.VideoWriter(self.video_filename, codec, self.fps, (width, height))
-        while True:
-            if self.end_record:
-                break
+        while not self.end_record:
             frame = pyautogui.screenshot()
             frame = np.array(frame)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -85,12 +81,13 @@ class Recorder:
         video_name = input("Write how name this video: ")
         if video_name == "":
             video_name = "video"
-        final_video_with_sound.write_videofile(f"Videos//{video_name}.mp4", self.fps)
+        video_path = f"Videos//{video_name}.mp4"
+        final_video_with_sound.write_videofile(video_path, self.fps)
         sound.close()
         video.close()
         os.remove(self.sound_filename)
         os.remove(self.video_filename)
-        abs_video_path = os.path.abspath(f"Videos//{video_name}.mp4")
+        abs_video_path = os.path.abspath(video_path)
         print(termcolor.colored(termcolor.colored(f"Recording done. Video saved in {abs_video_path}\n", "green")))
 
     def waiting_for_input(self):

@@ -14,15 +14,15 @@ COMPUTER.CPUEnabled = True
 COMPUTER.GPUEnabled = True
 COMPUTER.Open()
 
-# todo finish refactoring
+
 class GetDisplayData:
     def __init__(self):
-        threading._start_new_thread(GetGPUInfo, ())
-        threading._start_new_thread(GetCPUInfo, ())
-        threading._start_new_thread(GetRAMInfo, ())
-        threading._start_new_thread(GetGPUInfo, ())
-        threading._start_new_thread(GetFPSInfo, ())
-        threading._start_new_thread(GetInternetInfo, ())
+        threading.Thread(target=GetGPUInfo, daemon=True).start()
+        threading.Thread(target=GetCPUInfo, daemon=True).start()
+        threading.Thread(target=GetRAMInfo, daemon=True).start()
+        threading.Thread(target=GetGPUInfo, daemon=True).start()
+        threading.Thread(target=GetFPSInfo, daemon=True).start()
+        threading.Thread(target=GetInternetInfo, daemon=True).start()
 
         time.sleep(0.2)
         user_actions.get_user_input()
@@ -30,7 +30,7 @@ class GetDisplayData:
 
 class GetCPUInfo:
     def __init__(self):
-        threading._start_new_thread(self.get_cpu_usage, ())
+        threading.Thread(target=self.get_cpu_usage, daemon=True).start()
         self.get_cpu_temp()
 
     @staticmethod
@@ -54,7 +54,7 @@ class GetCPUInfo:
                 COMPONENTS_INFO["cpu_temp"]["message"] = f"Temp: {'%.1f' % cpu_temp}C"
             except TypeError:
                 print(termcolor.colored("""Can't get access to CPU temperature. To see CPU temperature run program as admin
-    Source: https://www.digitalcitizen.life/run-as-admin/\n""", "red"))
+Source: https://www.digitalcitizen.life/run-as-admin/\n""", "red"))
                 COMPONENTS_INFO["cpu_temp"]["message"] = "Temp: None"
                 break
             time.sleep(config.SLEEP_IN_SEC)
@@ -62,9 +62,9 @@ class GetCPUInfo:
 
 class GetGPUInfo:
     def __init__(self):
-        threading._start_new_thread(self.get_gpu_usage, ())
-        threading._start_new_thread(self.get_gpu_temp, ())
-        threading._start_new_thread(self.get_gpu_memory_owned, ())
+        threading.Thread(target=self.get_gpu_usage, daemon=True).start()
+        threading.Thread(target=self.get_gpu_temp, daemon=True).start()
+        threading.Thread(target=self.get_gpu_memory_owned, daemon=True).start()
         self.get_gpu_memory_usage()
 
     @staticmethod
@@ -112,7 +112,7 @@ class GetGPUInfo:
 
 class GetRAMInfo:
     def __init__(self):
-        threading._start_new_thread(self.get_owned_ram, ())
+        threading.Thread(target=self.get_owned_ram, daemon=True).start()
         self.get_ram_usage()
 
     @staticmethod
@@ -133,7 +133,7 @@ class GetInternetInfo:
         self.ip_server_to_pinging = "155.133.250.1"  # EU west CS-GO server
         self.old_internet_usage = psutil.net_io_counters().bytes_sent + psutil.net_io_counters().bytes_recv
 
-        threading._start_new_thread(self.get_ping())
+        threading.Thread(target=self.get_ping, daemon=True).start()
         self.get_internet_usage()
 
     def get_ping(self):
@@ -160,7 +160,7 @@ class GetInternetInfo:
 
 class GetFPSInfo:
     def __init__(self):
-        threading._start_new_thread(self.get_current_fps, ())
+        threading.Thread(target=self.get_current_fps, daemon=True).start()
         self.get_average_fps()
 
     def get_current_fps(self):
