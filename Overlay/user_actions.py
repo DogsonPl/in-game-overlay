@@ -62,11 +62,9 @@ def change_font_size():
 def change_font_color():
     while True:
         try:
-            new_color = input(
-                f"Current color: {config.SETTINGS_DATA['font_color']}\nWrite new color\nIf you want see all available colors write 1: ")
+            new_color = input(f"Current color: {config.SETTINGS_DATA['font_color']}\nWrite new color\nIf you want see all available colors write 1: ")
             if new_color == "1":
-                webbrowser.open(
-                    "http://www.science.smith.edu/dftwiki/images/thumb/3/3d/TkInterColorCharts.png/800px-TkInterColorCharts.png")
+                webbrowser.open("http://www.science.smith.edu/dftwiki/images/thumb/3/3d/TkInterColorCharts.png/800px-TkInterColorCharts.png")
             else:
                 test_label = tk.Label(fg=new_color)
                 break
@@ -80,9 +78,8 @@ def change_font_color():
 def change_refresh_time():
     while True:
         try:
-            new_refresh_time = float(
-                input(
-                    f"Current refresh time: {config.SETTINGS_DATA['refresh'] / 1000}\nWrite new refresh time (in sec): "))
+            new_refresh_time = float(input(f"""Current refresh time: {config.SETTINGS_DATA['refresh'] / 1000}
+Write new refresh time (in sec): """))
             break
         except ValueError:
             print(termcolor.colored("You have to write number like 10", "red"))
