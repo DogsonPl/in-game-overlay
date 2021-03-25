@@ -74,22 +74,6 @@ class Recorder:
             video.write(frame)
         video.release()
 
-    def add_video_to_sound(self):
-        video = VideoFileClip(self.video_filename)
-        sound = AudioFileClip(self.sound_filename)
-        final_video_with_sound = video.set_audio(sound)
-        video_name = input("Write how name this video: ")
-        if video_name == "":
-            video_name = "video"
-        video_path = f"Videos//{video_name}.mp4"
-        final_video_with_sound.write_videofile(video_path, self.fps)
-        sound.close()
-        video.close()
-        os.remove(self.sound_filename)
-        os.remove(self.video_filename)
-        abs_video_path = os.path.abspath(video_path)
-        print(termcolor.colored(termcolor.colored(f"Recording done. Video saved in {abs_video_path}\n", "green")))
-
     def waiting_for_input(self):
         print(termcolor.colored("Recording. Click enter to stop --> ", "yellow"))
         input()
@@ -97,4 +81,21 @@ class Recorder:
         self.end_record = True
         while not self.done_voice_saving:
             time.sleep(1)
-        self.add_video_to_sound()
+        add_video_to_sound(self.video_filename, self.sound_filename, self.fps)
+
+
+def add_video_to_sound(video_filename, sound_filename, fps):
+    video = VideoFileClip(video_filename)
+    sound = AudioFileClip(sound_filename)
+    final_video_with_sound = video.set_audio(sound)
+    video_name = input("Write how name this video: ")
+    if video_name == "":
+        video_name = "video"
+    video_path = f"Videos//{video_name}.mp4"
+    final_video_with_sound.write_videofile(video_path, fps)
+    sound.close()
+    video.close()
+    os.remove(sound_filename)
+    os.remove(video_filename)
+    abs_video_path = os.path.abspath(video_path)
+    print(termcolor.colored(termcolor.colored(f"Recording done. Video saved in {abs_video_path}\n", "green")))
