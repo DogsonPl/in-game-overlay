@@ -1,14 +1,15 @@
+import os
+import threading
+import time
+
 import sounddevice as sd
 import pyautogui
 import numpy as np
 import wavio as wv
 import wave
 import win32api
-import os
-import threading
 from moviepy.editor import VideoFileClip
 from moviepy.editor import AudioFileClip
-import time
 import termcolor
 from cv2 import cv2
 
@@ -88,7 +89,7 @@ def add_video_to_sound(video_filename, sound_filename, fps):
     video = VideoFileClip(video_filename)
     sound = AudioFileClip(sound_filename)
     final_video_with_sound = video.set_audio(sound)
-    video_name = input("Write how name this video: ")
+    video_name = input("Write how to name this video: ")
     if video_name == "":
         video_name = "video"
     video_path = f"Videos//{video_name}.mp4"

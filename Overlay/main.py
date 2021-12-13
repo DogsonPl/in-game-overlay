@@ -1,6 +1,8 @@
-import tkinter as tk
 import threading
+
+import tkinter as tk
 import termcolor
+
 import config
 from components_info import COMPONENTS_INFO
 from get_components_info import GetDisplayData
@@ -57,7 +59,7 @@ if __name__ == '__main__':
     print(termcolor.colored(made_by, "green"))
     print(termcolor.colored("""Loading program...
 You can minimize this window. Close this window if you want close program
-If this program don't work in game, change game settings to display game in window\n""", "blue", attrs=["bold"]))
+If this program doesn't work in game, change game settings to display game in window\n""", "blue", attrs=["bold"]))
     print(termcolor.colored("""Ping is pinging only EU west CS-GO server, soo in other games ping can be different
 In addition this option can slow down your Internet a bit. Write ping to disable this option\n""", "yellow"))
 

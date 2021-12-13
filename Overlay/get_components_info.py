@@ -1,13 +1,16 @@
+import time
+import threading
+
 import psutil
 import pythonping
 import GPUtil
-import threading
 import termcolor
-import time
-import user_actions
-import config
 from components_info import COMPONENTS_INFO
 from OpenHardwareMonitor import Hardware
+
+import user_actions
+import config
+
 
 COMPUTER = Hardware.Computer()
 COMPUTER.CPUEnabled = True

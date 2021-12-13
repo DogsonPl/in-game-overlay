@@ -1,7 +1,8 @@
-import tkinter as tk
 import json
 import os
 import clr
+
+import tkinter as tk
 import colorama
 
 colorama.init()

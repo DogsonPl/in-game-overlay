@@ -1,8 +1,10 @@
-import tkinter as tk
-import termcolor
+import json
 import sys
 import webbrowser
-import json
+
+import tkinter as tk
+import termcolor
+
 import recorder
 import config
 
@@ -64,7 +66,7 @@ def change_font_color():
         try:
             new_color = input(f"Current color: {config.SETTINGS_DATA['font_color']}\nWrite new color\nIf you want see all available colors write 1: ")
             if new_color == "1":
-                webbrowser.open("http://www.science.smith.edu/dftwiki/images/thumb/3/3d/TkInterColorCharts.png/800px-TkInterColorCharts.png")
+                webbrowser.open("https://i1.wp.com/www.wikipython.com/wp-content/uploads/Color-chart-capture-082321.jpg?resize=1024%2C579&ssl=1")
             else:
                 test_label = tk.Label(fg=new_color)
                 break
